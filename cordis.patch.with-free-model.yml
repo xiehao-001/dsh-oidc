@@ -1,11 +1,92 @@
-# @eduwork/dsh-oidc bundle patch（含捆绑的免密钥模型通道）。
+# Bundled defaults: 华师大 (ECNU) 统一身份认证 + 校内模型。
 #
-# 第二行需要 dsh-our-free-model 已被同一 DSH 安装识别；若你只安装了本包、
-# 没有单独安装 vendor/dsh-our-free-model，请改用默认的 cordis.patch.yml。
+# clientId 是学校发放的公开客户端 ID，不随仓库分发。部署时用环境变量覆盖：
+#   EDUWORK_OIDC_CLIENT_ID  （或 DSH_OIDC_CLIENT_ID / EDUWORK_ECNU_CLIENT_ID）
+# 没有配置时点「统一认证登录」会提示具体做法，不会静默失败。
+#
+# 需要额外机构：另写一份 JSON 到 EDUWORK_OIDC_PROFILE 指向的文件（数组或 {profiles:[]}）。
 - insert:
-    - id: dsh-oidc
+    - id: enterprise-oidc
       name: '@eduwork/dsh-oidc'
-      config: {}
+      config:
+        uiMode: "standard"
+        profilePathEnv: "EDUWORK_OIDC_PROFILE"
+        allowEmptyProfiles: false
+        desktop:
+          callbackPort: 0
+          flowTimeoutMs: 600000
+        profile:
+          allowInsecureDevelopment: false
+          schemaVersion: "dsh-oidc/v1alpha1"
+          id: "ecnu"
+          displayName: "华东师范大学 AI 服务"
+          organization: "华东师范大学"
+          brand:
+            organizationName: "华东师范大学"
+            mark: "华"
+            loginTitle: "华东师范大学统一身份认证"
+            loginButtonLabel: "统一认证登录"
+            loginDescription: "使用学校账号登录，连接学校提供的模型与校内服务；也可在模型设置中使用自己的 API Key。"
+            primaryColor: "#8c1d2c"
+          auth:
+            discoveryUrl: "https://chat.ecnu.edu.cn/.well-known/openid-configuration"
+            expectedIssuer: "https://chat.ecnu.edu.cn"
+            experimentalOidcLlm: true
+            clientId: "replace-with-public-client-id"
+            identityMode: "oidc"
+            additionalScopes:
+              - "search.web"
+              - "search.campus"
+          provider:
+            id: "chatecnu"
+            displayName: "华东师范大学"
+            adapter: "openai-compatible"
+            modelSource: "discovery"
+            reasoning: "high"
+            defaultContextWindow: 524288
+            defaultMaxTokens: 262144
+            compat:
+              supportsDeveloperRole: false
+              thinkingFormat: "deepseek"
+              supportsReasoningEffort: true
+            models:
+              -
+                id: "ecnu-max"
+                type: "llm"
+                name: "ecnu-max"
+                input:
+                  - "text"
+                  - "image"
+                contextWindow: 524288
+                maxTokens: 262144
+                reasoningEfforts:
+                  low: "low"
+                  high: "high"
+                  max: "max"
+                defaultReasoningEffort: "high"
+              -
+                id: "ecnu-plus"
+                type: "llm"
+                name: "ecnu-plus"
+                input:
+                  - "text"
+                  - "image"
+                contextWindow: 262144
+                maxTokens: 65536
+                compat:
+                  supportsReasoningEffort: false
+              -
+                id: "ecnu-embedding-small"
+                type: "embedding"
+              -
+                id: "ecnu-rerank"
+                type: "rerank"
+              -
+                id: "ecnu-image"
+                type: "image"
+              -
+                id: "ecnu-tts"
+                type: "tts"
     - id: our-free-model
       name: 'dsh-our-free-model'
       config: {}

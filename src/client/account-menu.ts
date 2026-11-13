@@ -8,7 +8,28 @@ const h = React.createElement
 const action = { width: '100%', textAlign: 'left' as const, border: 0, borderRadius: 7, padding: '9px 10px', font: 'inherit', cursor: 'pointer', background: 'var(--dsw-alias-bg-layer-2, #f5f6f8)', color: 'inherit' }
 const secondary = 'var(--dsw-alias-label-secondary, #69717f)'
 
-export function AccountMenu({ t, service, profile, children, renderSlot, wide = true }: any) {
+/**
+ * One row of the account switcher. Each row owns its own status subscription so
+ * that a second organization signing in or out re-renders only that row.
+ */
+function ProfileRow({ t, service, profile, active, onPick }: any) {
+  const status = useAccountStatus(service, profile.id)
+  const signedIn = status?.state === 'connected' || status?.state === 'authenticated'
+  const label = accountUserName(status) || accountOrganization(profile)
+  const mark = profile.brand?.mark || accountOrganization(profile).slice(0, 1)
+  return h('button', {
+    type: 'button', role: 'menuitemradio', 'aria-checked': active, disabled: active, onClick: onPick,
+    style: { ...action, display: 'flex', alignItems: 'center', gap: 8, padding: '7px 8px',
+      border: active ? '1px solid var(--dsw-alias-state-business-primary, #9f2636)' : '1px solid transparent' },
+  },
+  h('span', { style: { width: 20, height: 20, flex: 'none', borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 11, fontWeight: 600, background: 'var(--dsw-alias-bg-layer-3, #e9ecf2)', color: 'var(--dsw-alias-label-primary, #20232c)' } }, mark),
+  h('span', { style: { flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, label),
+  h('span', { style: { flex: 'none', fontSize: 11, color: signedIn ? 'var(--dsw-alias-state-success-primary, #357a55)' : secondary } },
+    signedIn ? t('menu.signedIn') : t('menu.notSignedIn')))
+}
+
+export function AccountMenu({ t, service, profile, profiles = [], onSwitchProfile, children, renderSlot, wide = true }: any) {
   const status = useAccountStatus(service, profile.id)
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({ left: 12, bottom: 60 })
@@ -64,6 +85,10 @@ export function AccountMenu({ t, service, profile, children, renderSlot, wide = 
   const content = open && h('div', { ref: panel, id, role: 'menu', tabIndex: -1, 'aria-label': t('menu.menu'), onKeyDown: keydown,
     style: { position: 'fixed', zIndex: 11000, ...position, width: 'min(296px, calc(100vw - 16px))', maxHeight: 'min(540px, calc(100vh - 80px))', overflowY: 'auto', boxSizing: 'border-box', padding: 14, border: '1px solid var(--dsw-alias-border-l2, #e1e4eb)', borderRadius: 13, background: 'var(--dsw-alias-bg-layer-1, #fff)', color: 'var(--dsw-alias-label-primary, #20232c)', boxShadow: '0 12px 38px #17264d20', fontSize: 12 } },
     h('div', { role: 'presentation', style: { padding: '2px 3px 12px' } }, h('strong', null, accountUserName(status) || accountOrganization(profile)), h('div', { style: { marginTop: 4, color: secondary } }, accountOrganization(profile))),
+    profiles.length > 1 && h('div', { role: 'group', 'aria-label': t('menu.accounts'), style: { display: 'grid', gap: 3, paddingBottom: 10, marginBottom: 10, borderBottom: '1px solid var(--dsw-alias-border-l2, #e1e4eb)' } },
+      h('div', { role: 'presentation', style: { padding: '0 3px 3px', color: secondary, fontSize: 11 } }, t('menu.accounts')),
+      ...profiles.map((row: any) => h(ProfileRow, { key: row.id, t, service, profile: row, active: row.id === profile.id,
+        onPick: () => { onSwitchProfile?.(row.id); close(true) } }))),
     typeof renderSlot === 'function' ? renderSlot('oidc.account.menu.details', { profile, status, busy, run, refreshAccount, defaultContent }, { fallback: defaultContent }) : defaultContent,
     h('div', { style: { display: 'grid', gap: 6 } },
       !signedIn && button(busy ? t('menu.processing') : profile.brand?.loginButtonLabel || t('menu.login'), () => void run(() => login.begin(profile.id))),

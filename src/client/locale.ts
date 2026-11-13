@@ -127,6 +127,9 @@ export const dictionaries = {
     "menu.login": "登录账户",
     "menu.waiting": "请在浏览器中完成登录…",
     "menu.cancel": "取消登录",
+    "menu.accounts": "账号",
+    "menu.signedIn": "已登录",
+    "menu.notSignedIn": "未登录",
     "menu.processing": "正在处理…"
   },
   "en": {
@@ -256,6 +259,9 @@ export const dictionaries = {
     "menu.login": "Sign in",
     "menu.waiting": "Complete sign-in in your browser…",
     "menu.cancel": "Cancel sign-in",
+    "menu.accounts": "Accounts",
+    "menu.signedIn": "Signed in",
+    "menu.notSignedIn": "Not signed in",
     "menu.processing": "Working…"
   }
 }

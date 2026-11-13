@@ -177,7 +177,7 @@ export function ManagedProviderCard({ t, service, configuration }: any) {
         h('div', { style: { display: 'flex', gap: 7, flex: 'none', flexWrap: 'wrap', justifyContent: 'flex-end' } },
           h('button', { type: 'button', disabled: busy, style: buttonStyle, onClick: () => openDetail(profile) }, canManageProfiles || canManageModels ? t('managed.configure') : (t('managed.viewDetails'))),
           canManageProfiles && !profile.enabled && h('button', { type: 'button', disabled: busy, style: primaryStyle, onClick: () => enable(profile.id) }, t('managed.enable')),
-          profile.enabled && !restartRequired && !connected && h('button', { type: 'button', disabled: busy, style: primaryStyle, onClick: () => connect(profile.id) }, busy ? t('managed.processing') : t('managed.login')),
+          profile.enabled && !restartRequired && !connected && h('button', { type: 'button', disabled: busy, style: primaryStyle, onClick: () => connect(profile.id) }, busy ? t('managed.processing') : profile.brand?.loginButtonLabel || t('managed.login')),
           profile.enabled && !restartRequired && connected && h('button', { type: 'button', disabled: busy, style: buttonStyle, onClick: () => run(() => service.reconcile(profile.id, {})) }, t('managed.refresh')))))
   })) : h('div', { style: { padding: 18, border: `1px dashed ${border}`, borderRadius: 13, background } },
     h('strong', { style: { display: 'block', fontSize: 14 } }, t('managed.emptyTitle')),

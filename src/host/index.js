@@ -1,7 +1,7 @@
 import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import { apply as applyEnterpriseProvider } from './provider/index.js'
 import { GatewayDesktopBackend, GatewayWebBackend } from './gateway-backend.js'
-import { enterpriseProviderConfig, loadEnterpriseProfiles, publicProfile } from './profile.js'
+import { clientIdPlaceholder, enterpriseProviderConfig, loadEnterpriseProfiles, publicProfile } from './profile.js'
 
 export const name = 'dsh-oidc'
 const remoteInitializers = []
@@ -126,6 +126,10 @@ export class OidcAccountService extends TypertRemoteService {
     return this.callBackend('modelAuthorization', profileID, expectedBaseURL)
   }
   async begin(profileID) {
+    const profile = this.profiles.get(profileID)
+    if (profile?.auth?.experimentalOidcLlm && clientIdPlaceholder(profile.auth.clientId)) {
+      throw new Error('机构登录还没有配置 Client ID：请设置环境变量 EDUWORK_OIDC_CLIENT_ID（或 DSH_OIDC_CLIENT_ID），并把学校提供的公开客户端 ID 填进去，然后重启应用。')
+    }
     const result = await this.callBackend('begin', profileID)
     if (result.mode === 'completed') this.notifyAccount(result.status)
     return result

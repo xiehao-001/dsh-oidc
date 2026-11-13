@@ -342,19 +342,41 @@ export function normalizeEnterpriseProfile(raw) {
   })
 }
 
+/**
+ * The public Client ID of an oidc-llm gateway is issued per organization and is
+ * never committed, so a bundled profile ships a placeholder and the deployment
+ * supplies the real value through the environment. Both names are read so a
+ * single organization can be forwarded without renaming the variable that its
+ * own tooling already sets.
+ */
+export const CLIENT_ID_PLACEHOLDERS = new Set(['', 'replace-with-public-client-id', 'replace-me'])
+export const CLIENT_ID_ENV_NAMES = ['EDUWORK_OIDC_CLIENT_ID', 'DSH_OIDC_CLIENT_ID', 'EDUWORK_ECNU_CLIENT_ID']
+
+export function clientIdPlaceholder(clientId) {
+  return typeof clientId !== 'string' || CLIENT_ID_PLACEHOLDERS.has(clientId.trim())
+}
+
+function withClientIdOverride(raw, environment) {
+  if (raw === null || typeof raw !== 'object' || raw.auth === null || typeof raw.auth !== 'object') return raw
+  const supplied = CLIENT_ID_ENV_NAMES.map(name => environment?.[name]).find(value => typeof value === 'string' && value.trim() !== '')
+  if (supplied === undefined) return raw
+  if (!clientIdPlaceholder(raw.auth.clientId)) return raw
+  return { ...raw, auth: { ...raw.auth, clientId: supplied.trim() } }
+}
+
 export function loadEnterpriseProfiles(raw = {}, environment = process.env) {
   const profiles = []
-  if (raw.profile !== undefined) profiles.push(normalizeEnterpriseProfile(raw.profile))
+  if (raw.profile !== undefined) profiles.push(normalizeEnterpriseProfile(withClientIdOverride(raw.profile, environment)))
   if (raw.profiles !== undefined) {
     if (!Array.isArray(raw.profiles)) throw new Error('dsh-oidc profiles must be an array')
-    profiles.push(...raw.profiles.map(normalizeEnterpriseProfile))
+    profiles.push(...raw.profiles.map(profile => normalizeEnterpriseProfile(withClientIdOverride(profile, environment))))
   }
   const pathEnv = raw.profilePathEnv ?? 'EDUWORK_OIDC_PROFILE'
   const profilePath = environment[pathEnv] || (pathEnv === 'EDUWORK_OIDC_PROFILE' ? environment.DSH_OIDC_ENTERPRISE_PROFILE : undefined)
   if (typeof profilePath === 'string' && profilePath) {
     const parsed = JSON.parse(readFileSync(profilePath, 'utf8'))
     const rows = Array.isArray(parsed) ? parsed : parsed.profiles ?? [parsed]
-    profiles.push(...rows.map(normalizeEnterpriseProfile))
+    profiles.push(...rows.map(row => normalizeEnterpriseProfile(withClientIdOverride(row, environment))))
   }
   const unique = new Map()
   const providers = new Set()

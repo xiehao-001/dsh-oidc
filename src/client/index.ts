@@ -150,12 +150,34 @@ function EnterpriseOnboarding({ t, service, configuration, complete }: any) {
     profile.provider ? `${t('account.enabled')} ${profile.provider.displayName}: ${profile.provider.models.map((model: any) => model.name).join('、')}` : t('account.other'))))
 }
 
+const ACTIVE_PROFILE_KEY = 'dsh-oidc:active-profile'
+
+function readActiveProfile(profiles: any[]): string {
+  try {
+    const saved = window.localStorage.getItem(ACTIVE_PROFILE_KEY)
+    if (typeof saved === 'string' && profiles.some(profile => profile.id === saved)) return saved
+  } catch {}
+  return profiles[0]?.id
+}
+
+function rememberActiveProfile(profileID: string) {
+  try { window.localStorage.setItem(ACTIVE_PROFILE_KEY, profileID) } catch {}
+}
+
 function FooterAccount({ t, service, configuration, renderSlot, wide = true }: any) {
-  const profile = configuration.profiles[0]
+  const profiles = configuration.profiles
+  const [activeID, setActiveID] = useState(() => readActiveProfile(profiles))
+  useEffect(() => {
+    if (!profiles.some((profile: any) => profile.id === activeID)) setActiveID(profiles[0]?.id)
+  }, [configuration])
+  const profile = profiles.find((row: any) => row.id === activeID) ?? profiles[0]
   const status = useAccountStatus(service, profile.id)
   const userName = accountUserName(status)
   const statusLabel = status?.state === 'connected' ? (profile.provider ? t('account.footerConnected') : t('account.identityConnected')) : t('account.footerSetup')
-  return h(AccountMenu, { t, service, profile, renderSlot, wide }, h('div', { style: { display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 } },
+  return h(AccountMenu, {
+    t, service, profile, profiles, renderSlot, wide,
+    onSwitchProfile: (profileID: string) => { setActiveID(profileID); rememberActiveProfile(profileID) },
+  }, h('div', { style: { display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 } },
     h(ProductMark, { profile, size: 28 }),
     wide && h('div', { style: { minWidth: 0 } },
       h('div', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 13, fontWeight: 600 } }, userName || accountOrganization(profile)),
