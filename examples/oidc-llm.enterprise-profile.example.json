@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "dsh-oidc/v1alpha1",
+  "id": "example-models",
+  "displayName": "示例模型服务（实验）",
+  "auth": {
+    "discoveryUrl": "https://models.example.org/.well-known/openid-configuration",
+    "expectedIssuer": "https://models.example.org",
+    "experimentalOidcLlm": true,
+    "clientId": "replace-with-public-client-id",
+    "identityMode": "oidc"
+  },
+  "allowInsecureDevelopment": false,
+  "provider": {
+    "models": [
+      {
+        "id": "example-chat",
+        "type": "llm"
+      },
+      {
+        "id": "example-vision-chat",
+        "type": "llm",
+        "input": [
+          "text",
+          "image"
+        ]
+      },
+      {
+        "id": "example-embedding",
+        "type": "embedding"
+      },
+      {
+        "id": "example-rerank",
+        "type": "rerank"
+      },
+      {
+        "id": "example-image",
+        "type": "image"
+      },
+      {
+        "id": "example-tts",
+        "type": "tts"
+      }
+    ]
+  }
+}

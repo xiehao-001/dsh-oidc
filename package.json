@@ -1,0 +1,100 @@
+{
+  "name": "@eduwork/dsh-oidc",
+  "version": "0.3.4",
+  "description": "Standards-based OIDC login, institutional branding, token-authorized model access, bundled with a key-less model pack.",
+  "type": "module",
+  "main": "lib/index.js",
+  "license": "MulanPSL-2.0 AND MIT",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./profile": "./lib/profile.js",
+    "./oidc": "./lib/oidc.js",
+    "./provider": "./lib/provider/index.js",
+    "./transforms": "./lib/provider/transforms.js",
+    "./typert": "./lib/typert.host.js",
+    "./remote": "./lib/typert.remote-client.js",
+    "./package.json": "./package.json",
+    "./locale/en.json": "./locale/en.json",
+    "./locale/zh.json": "./locale/zh.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "lib/**/*",
+    "locale/*.json",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "MARKET.md",
+    "docs/**/*",
+    "vendor/**/*",
+    "cordis.patch.with-free-model.yml",
+    "BUNDLED.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-settings-general",
+        "@deepseek-ai/dsh-client-ui-settings-models",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-theme",
+        "@deepseek-ai/dsh-client-locale"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "engines": {
+    "node": ">=24.18.0",
+    "dsh": ">=0.2.1 <0.3.0"
+  },
+  "keywords": [
+    "sso",
+    "oidc",
+    "auth",
+    "litellm",
+    "branding",
+    "free-model",
+    "gateway"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.5 <4.1.0 || 4.1.0",
+    "@deepseek-ai/dsh-api-remotes": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-attachment": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-authorization": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-brand": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-client-ui-conversation": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-client-ui-renderer": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-client-ui-settings": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-client-ui-settings-general": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-client-ui-settings-models": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-client-ui-sidebar": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-client-ui-theme": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-credentials": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-fs": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-host-webserver": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-launch-environment": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-llm": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-llm-pi-ai": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-sandbox": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-scope": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-session": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-settings": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-timeout": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-typert-protocol": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0",
+    "@earendil-works/pi-ai": "^1.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@deepseek-ai/dsh-client-locale": ">=0.2.1-rc.2 <0.3.0-0 || >=0.2.2-rc.1 <0.2.3-0"
+  },
+  "dependencies": {
+    "zod": "4.4.3"
+  }
+}

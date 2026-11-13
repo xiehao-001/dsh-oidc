@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "dsh-oidc/v1alpha1",
+  "id": "example-resources",
+  "displayName": "Example Organization",
+  "auth": {
+    "discoveryUrl": "https://models.example.org/.well-known/openid-configuration",
+    "expectedIssuer": "https://models.example.org",
+    "experimentalOidcLlm": true,
+    "clientId": "replace-with-public-client-id",
+    "identityMode": "oidc"
+  },
+  "provider": {
+    "id": "example-ai",
+    "adapter": "openai-compatible",
+    "modelSource": "discovery",
+    "models": [
+      {
+        "id": "example-chat",
+        "type": "llm"
+      }
+    ]
+  },
+  "allowInsecureDevelopment": false
+}

@@ -1,0 +1,11 @@
+# @eduwork/dsh-oidc bundle patch（含捆绑的免密钥模型通道）。
+#
+# 第二行需要 dsh-our-free-model 已被同一 DSH 安装识别；若你只安装了本包、
+# 没有单独安装 vendor/dsh-our-free-model，请改用默认的 cordis.patch.yml。
+- insert:
+    - id: dsh-oidc
+      name: '@eduwork/dsh-oidc'
+      config: {}
+    - id: our-free-model
+      name: 'dsh-our-free-model'
+      config: {}
