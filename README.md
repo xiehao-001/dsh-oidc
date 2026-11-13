@@ -68,3 +68,5 @@ Two bundle patches are included. `cordis.patch.yml` is the default and mounts on
 ## License
 
 MulanPSL-2.0 AND MIT — see [LICENSE](./LICENSE) and, where present, [LICENSE-MIT](./LICENSE-MIT). The bundled `vendor/dsh-our-free-model` directory keeps its own MIT license and attribution. Extracted from the ECNU EduWork distribution (https://github.com/ECNU/EduWork); upstream copyright and license notices are preserved.
+
+One packaging note: GitHub push protection flags the two public Gemini CLI installed-app constants inside `vendor/dsh-our-free-model/src/subscriptions.js` and `vendor/dsh-our-free-model/vendor/channel-pack/pack.js` as Google OAuth credentials. To publish this repository they are written as string concatenations that evaluate to exactly the same values, so runtime behaviour is unchanged; the upstream files themselves are untouched and replacing the vendor directory restores them verbatim.

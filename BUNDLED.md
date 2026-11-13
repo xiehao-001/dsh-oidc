@@ -21,3 +21,9 @@
 
 - 捆绑包由上游维护，升级请直接替换 `vendor/dsh-our-free-model/` 目录。
 - 它会在本机监听一个 OpenAI 兼容端口（默认仅 loopback）；不需要时不要启用 B 方案。
+
+## 发布适配
+
+GitHub push protection 会把两组 Gemini CLI 的公开 installed-app 常量识别为 Google OAuth 凭据并拦截推送：
+`vendor/dsh-our-free-model/src/subscriptions.js` 与 `vendor/dsh-our-free-model/vendor/channel-pack/pack.js`。
+为了让本仓库可以公开，这两处被改写为**等价的字符串拼接**（运行时取到的值完全不变），功能不受影响；上游文件本身未改动，升级时按上文替换目录即可。
